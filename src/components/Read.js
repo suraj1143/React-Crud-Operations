@@ -5,14 +5,15 @@ import { Link } from 'react-router-dom';
 export default function Read() {
 
     const [data, setdata] = useState([]);
-    const [tableDark, settableDark] = useState(" ")
+    const [tableDark, settableDark] = useState(" ");
+    const [inputText, setinputText] = useState(" ");
 
     function getData(){
         axios
         .get('https://63a2b069471b38b206f939f1.mockapi.io/crud-react')
         .then((res) => {
             // console.log(res.data);
-            setdata(res.data)
+            setdata(res.data);
         })
     };
 
@@ -29,8 +30,12 @@ export default function Read() {
 
     useEffect(() => {
         getData();
+    }, []);
 
-    }, [])
+    const inputHandler = (e) =>{
+        setinputText(e.target.value.toLowerCase());
+        console.log(inputText);
+    }
     
     return (
           <>
@@ -45,6 +50,11 @@ export default function Read() {
             </div>
         <div className='d-flex justify-content-between m-3 padding-3 '>
             <h2>Entries</h2>
+
+            <div class="mb-3">
+                <input type="search" className="form-control" placeholder='type here' onChange={inputHandler}/>
+            </div>
+
         <Link to="/">
         <button className='btn btn-primary'>Create User</button>
         </Link>
@@ -59,8 +69,17 @@ export default function Read() {
                     <th scope="col"></th>
                     </tr>
                 </thead>
-                {
-                    data.map((eachData) => {
+                {data
+                .filter((el)=>{
+                    if(el === ''){
+                        return el;
+                    }
+                    else{
+                        return (el.name.toLowerCase().includes(inputText) ||
+                                el.email.toLowerCase().includes(inputText));
+                    }
+                })
+                    .map((eachData) => {
                         return(
                         <>
                         <tbody>
